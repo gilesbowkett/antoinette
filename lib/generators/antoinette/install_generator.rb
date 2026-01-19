@@ -55,9 +55,7 @@ module Antoinette
 
       def add_routes
         route_content = <<~RUBY
-          authenticate :user, ->(u) { u.admin? } do
-            get "/antoinette", to: "antoinette/graph#show"
-          end
+          get "/antoinette", to: "antoinette/graph#show"
         RUBY
 
         route route_content
