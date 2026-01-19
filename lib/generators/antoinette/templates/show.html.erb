@@ -1,0 +1,11 @@
+<div id="bundle-graph"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var container = document.getElementById('bundle-graph');
+    Elm.BundleGraph.init({
+      node: container,
+      flags: <%= raw @bundle_graph %>
+    });
+  });
+</script>
