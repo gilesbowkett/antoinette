@@ -28,6 +28,14 @@ module Antoinette
         copy_file "Sankey.elm", "app/client/Sankey.elm"
       end
 
+      def install_elm_dependencies
+        say "Installing Elm dependencies..."
+        run "elm install elm/browser"
+        run "elm install elm/html"
+        run "elm install elm/json"
+        run "elm install elm/svg"
+      end
+
       def copy_controller
         copy_file "graph_controller.rb", "app/controllers/antoinette/graph_controller.rb"
       end
@@ -69,9 +77,6 @@ module Antoinette
         say "Next steps:"
         say "  1. Run `bin/antoinette config` to generate bundle configuration"
         say "  2. Run `bin/antoinette build` to compile Elm bundles"
-        say ""
-        say "Note: The route uses Devise's authenticate block with admin check."
-        say "Modify config/routes.rb if your auth setup differs."
         say ""
       end
     end
