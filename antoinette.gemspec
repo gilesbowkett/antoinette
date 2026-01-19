@@ -29,4 +29,14 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails", ">= 7.0"
   spec.add_dependency "dry-cli", "~> 1.0"
   spec.add_dependency "haikunator", "~> 1.1"
+
+  spec.post_install_message = <<~MSG
+
+    Thanks for installing Antoinette!
+
+    To complete setup, run:
+
+      bin/rails generate antoinette:install
+
+  MSG
 end
