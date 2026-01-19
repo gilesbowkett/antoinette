@@ -1,22 +1,23 @@
 #!/bin/bash
 
 # Usage:
-#   bin/compile_elm_bundle.sh development elm.js CaseBuilder.elm SearchForm.elm
-#   bin/compile_elm_bundle.sh production elm.js CaseBuilder.elm SearchForm.elm
+#   bin/compile_elm_bundle.sh elm development elm.js CaseBuilder.elm SearchForm.elm
+#   bin/compile_elm_bundle.sh ./bin/elm production elm.js CaseBuilder.elm SearchForm.elm
 
 set -e
 set -o pipefail # if the process fails, stop
 
-env=$1
-output=$2
-shift 2
+elm_cmd=$1
+env=$2
+output=$3
+shift 3
 elm_files="$@"
 
 if [ "$env" = "production" ]; then
   temp_js="elm_temp.js"
 
   echo "Compiling Elm (optimized)..."
-  ./bin/elm make --optimize --output=$temp_js $elm_files
+  $elm_cmd make --optimize --output=$temp_js $elm_files
 
   echo "Initial size: $(cat $temp_js | wc -c) bytes"
 
@@ -28,5 +29,5 @@ if [ "$env" = "production" ]; then
   rm $temp_js
 else
   echo "Compiling Elm (development)..."
-  ./bin/elm make --output=$output $elm_files
+  $elm_cmd make --output=$output $elm_files
 fi

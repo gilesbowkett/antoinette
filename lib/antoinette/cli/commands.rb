@@ -22,11 +22,13 @@ module Antoinette
           out = Antoinette::CLI.output
           config_path = Rails.root.join("config", "antoinette.json")
 
-          existing_custom = if File.exist?(config_path)
-            JSON.parse(File.read(config_path))["custom_view_paths"] || []
+          existing_config = if File.exist?(config_path)
+            JSON.parse(File.read(config_path))
           else
-            []
+            {}
           end
+          existing_custom = existing_config["custom_view_paths"] || []
+          existing_elm_path = existing_config["elm_path"] || "elm"
           all_custom_views = (existing_custom + custom_views).uniq
 
           analyzer = Antoinette::ElmAppUsageAnalyzer.new(
@@ -37,7 +39,10 @@ module Antoinette
             elm_analyzer: analyzer,
             custom_view_paths: all_custom_views
           )
-          json_output = weaver.generate_json
+
+          output = JSON.parse(weaver.generate_json)
+          output["elm_path"] = existing_elm_path
+          json_output = JSON.pretty_generate(output)
 
           if stdout
             out.puts json_output
@@ -56,7 +61,8 @@ module Antoinette
           config_path = Rails.root.join("config", "antoinette.json")
           config = JSON.parse(File.read(config_path))
 
-          compiler = Antoinette::CompileElm.new
+          elm_path = config["elm_path"] || "elm"
+          compiler = Antoinette::CompileElm.new(elm_path: elm_path)
           concatenator = Antoinette::ConcatBundle.new
           injector = Antoinette::InjectScriptTag.new
 
@@ -134,7 +140,8 @@ module Antoinette
             exit
           end
 
-          compiler = Antoinette::CompileElm.new
+          elm_path = config["elm_path"] || "elm"
+          compiler = Antoinette::CompileElm.new(elm_path: elm_path)
           concatenator = Antoinette::ConcatBundle.new
           injector = Antoinette::InjectScriptTag.new
 

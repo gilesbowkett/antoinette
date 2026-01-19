@@ -2,7 +2,8 @@
 
 module Antoinette
   class CompileElm
-    def initialize(environment: Rails.env.to_s)
+    def initialize(elm_path: "elm", environment: Rails.env.to_s)
+      @elm_path = elm_path
       @environment = environment
     end
 
@@ -11,7 +12,7 @@ module Antoinette
       output_file = "tmp/elm_compiled.js"
 
       script_path = Rails.root.join("bin", "compile_elm_bundle.sh")
-      command = "#{script_path} #{@environment} #{output_file} #{elm_file_paths.join(" ")}"
+      command = "#{script_path} #{@elm_path} #{@environment} #{output_file} #{elm_file_paths.join(" ")}"
 
       system(command)
 

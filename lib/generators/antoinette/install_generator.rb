@@ -13,6 +13,7 @@ module Antoinette
       def create_config_file
         create_file "config/antoinette.json", <<~JSON
           {
+            "elm_path": "elm",
             "bundles": []
           }
         JSON
