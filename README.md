@@ -8,10 +8,10 @@ and pieces of useful functionality. This is [the officially recommended way to
 bring Elm into a project](https://elm-lang.org/news/how-to-use-elm-at-work);
 Evan Czaplicki called it "_the_ success path."
 
-However, if you take that far enough, you reach a threshold where you either
-have to switch over to an SPA, or you have a bunch of little Elm features
-throughout your site. If you don't want to switch to an SPA, but you don't also
-want to send code down the wire that your app won't use, you're at a crossroads.
+However, if you take that far enough, you reach a threshold where you have a
+bunch of little Elm features throughout your site. If you don't want to switch
+to an SPA, but you don't also want to send code down the wire that your app
+won't use, you're at a crossroads.
 
 This is the problem Antoinette solves.
 
