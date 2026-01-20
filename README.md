@@ -42,7 +42,9 @@ This creates:
 - `bin/compile_elm_bundle.sh` - Elm compilation script
 - `bin/antoinette` - CLI binstub
 - `app/assets/javascripts/antoinette/` - Bundle output directory
-- Routes for `/antoinette` admin page (requires admin user)
+
+It also adds a route for `/antoinette` admin page, and adds
+`app/assets/javascripts/antoinette` to your `.gitignore`.
 
 ## Usage
 
@@ -86,7 +88,8 @@ bin/antoinette clear
 
 ### Admin Dashboard
 
-Visit `/antoinette` (admin-only) to see an interactive Sankey diagram showing how Elm apps flow into bundles and then into Rails templates.
+Visit `/antoinette` (admin-only) to see an interactive Sankey diagram showing
+how Elm apps flow into bundles and then into Rails templates.
 
 ## How It Works
 
@@ -136,20 +139,6 @@ The `antoinette:build` task runs automatically before `assets:precompile`:
 rake antoinette:build
 rake assets:precompile  # runs antoinette:build first
 ```
-
-## TODO
-
-Future improvements to consider:
-
-- [ ] `config/initializers/antoinette.rb` for configuration options:
-  - Custom Elm source path (default: `app/client/`)
-  - Custom assets output path (default: `app/assets/javascripts/antoinette/`)
-  - Custom views path (default: `app/views/`)
-  - Configurable Elm compiler path
-- [ ] Remove hard-coded Devise admin authentication in generated routes
-- [ ] Support for other authentication systems
-- [ ] Optional integration with importmap-rails
-- [ ] Watch mode for development
 
 ## License
 
