@@ -120,6 +120,7 @@ The `config/antoinette.json` file structure:
 
 ```json
 {
+  "elm_path": "elm",
   "bundles": [
     {
       "name": "holy-waterfall-8432",
