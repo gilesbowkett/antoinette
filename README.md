@@ -39,7 +39,6 @@ This creates:
 - `config/antoinette.json` - Bundle configuration
 - `app/client/` - Directory for Elm source files
 - `app/client/BundleGraph.elm` and `app/client/Sankey.elm` - Admin visualization
-- `bin/compile_elm_bundle.sh` - Elm compilation script
 - `bin/antoinette` - CLI binstub
 - `app/assets/javascripts/antoinette/` - Bundle output directory
 
@@ -112,7 +111,6 @@ Embedding a hash in the comment ensures that tags only get updated when bundle c
 
 - Rails 7.0+
 - Elm (customize via `elm_path` in `config/antoinette.json`)
-- Node.js with uglifyjs (for production builds)
 
 ## Configuration
 

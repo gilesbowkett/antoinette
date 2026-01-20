@@ -44,11 +44,6 @@ module Antoinette
         copy_file "show.html.erb", "app/views/antoinette/graph/show.html.erb"
       end
 
-      def copy_compile_script
-        copy_file "compile_elm_bundle.sh", "bin/compile_elm_bundle.sh"
-        chmod "bin/compile_elm_bundle.sh", 0o755
-      end
-
       def create_antoinette_binstub
         create_file "bin/antoinette", <<~RUBY
           #!/usr/bin/env ruby
