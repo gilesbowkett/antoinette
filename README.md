@@ -111,7 +111,7 @@ Embedding a hash in the comment ensures that tags only get updated when bundle c
 ## Requirements
 
 - Rails 7.0+
-- Elm compiler (`./bin/elm` or customize `bin/compile_elm_bundle.sh`)
+- Elm (customize via `elm_path` in `config/antoinette.json`)
 - Node.js with uglifyjs (for production builds)
 
 ## Configuration
