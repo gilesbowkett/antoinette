@@ -62,6 +62,15 @@ module Antoinette
         empty_directory "app/assets/javascripts/antoinette"
       end
 
+      def update_gitignore
+        gitignore_path = Rails.root.join(".gitignore")
+        ignore_line = "app/assets/javascripts/antoinette/"
+
+        if File.exist?(gitignore_path) && !File.read(gitignore_path).include?(ignore_line)
+          append_to_file ".gitignore", "#{ignore_line}\n"
+        end
+      end
+
       def add_routes
         route_content = <<~RUBY
           get "/antoinette", to: "antoinette/graph#show"
