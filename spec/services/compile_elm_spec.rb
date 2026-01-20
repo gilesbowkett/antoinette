@@ -36,7 +36,7 @@ RSpec.describe Antoinette::CompileElm do
       it "calls shell script with environment" do
         compiler.compile(elm_app_names)
         expect(compiler).to have_received(:system)
-          .with(/compile_elm_bundle\.sh development/)
+          .with(/compile_elm_bundle\.sh elm development/)
       end
 
       it "calls shell script with output file" do
@@ -112,7 +112,7 @@ RSpec.describe Antoinette::CompileElm do
       it "calls shell script with production environment" do
         compiler.compile(elm_app_names)
         expect(compiler).to have_received(:system)
-          .with(/compile_elm_bundle\.sh production/)
+          .with(/compile_elm_bundle\.sh elm production/)
       end
     end
   end

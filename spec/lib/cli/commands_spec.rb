@@ -37,9 +37,11 @@ RSpec.describe Antoinette::CLI::Commands do
         expect(weaver).to have_received(:generate_json)
       end
 
+      let(:expected_output) { "{\n  \"bundles\": [],\n  \"elm_path\": \"elm\"\n}" }
+
       it "writes to config file" do
         command.call(**options)
-        expect(File).to have_received(:write).with(output_path, json_output)
+        expect(File).to have_received(:write).with(output_path, expected_output)
       end
     end
 
