@@ -1,8 +1,25 @@
 # Antoinette
 
-Antoinette is a simple, lightweight build system that weaves Elm apps into JavaScript bundles for Rails templates. It ensures each page only downloads the Elm apps it actually uses, minimizing HTTP requests.
+![Actors from the Sofia Coppola "Marie Antoinette" film](images/antoinette.png)
 
-The name references "mansion weave" (a French woodworking technique used in French mansions starting around the 16th century). Elm apps are woven into JS bundles, which are then woven into Rails views.
+Imagine you have a Rails app with numerous Elm features. You haven't gone the
+SPA route; some Elm apps control the entire page, but many just provide bits
+and pieces of useful functionality. This is [the officially recommended way to
+bring Elm into a project](https://elm-lang.org/news/how-to-use-elm-at-work);
+Evan Czaplicki called it "_the_ success path."
+
+However, if you take that far enough, you reach a threshold where you either
+have to switch over to an SPA, or you have a bunch of little Elm features
+throughout your site. If you don't want to switch to an SPA, but you don't also
+want to send code down the wire that your app won't use, you're at a crossroads.
+
+This is the problem Antoinette solves.
+
+Antoinette is a lightweight JS bundler which weaves Elm apps into JavaScript
+bundles, and weaves JavaScript bundles into Rails templates.
+
+The name comes from mansion weave, a style of flooring based on woven elm wood,
+which was popular in French mansions from the 16th century onwards.
 
 ## Installation
 
