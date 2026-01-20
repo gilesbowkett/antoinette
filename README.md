@@ -72,7 +72,7 @@ bin/antoinette build
 
 ### Updating Specific Apps
 
-Rebuild only bundles containing specific Elm apps (useful during development):
+Rebuild only the bundles for specific Elm apps:
 
 ```bash
 bin/antoinette update app/client/SearchForm.elm app/client/CaseBuilder.elm
@@ -88,8 +88,8 @@ bin/antoinette clear
 
 ### Admin Dashboard
 
-Visit `/antoinette` (admin-only) to see an interactive Sankey diagram showing
-how Elm apps flow into bundles and then into Rails templates.
+Visit `/antoinette` to see an interactive Sankey diagram showing how Elm apps
+flow into bundles and then into Rails templates.
 
 ## How It Works
 
@@ -106,7 +106,7 @@ Antoinette injects script tags like:
 <%= javascript_include_tag "antoinette/holy-waterfall-8432" %> <!-- antoinette a1b2c3d4... -->
 ```
 
-The digest comment ensures tags are only updated when bundle content changes.
+Embedding a hash in the comment ensures that tags only get updated when bundle content changes.
 
 ## Requirements
 
