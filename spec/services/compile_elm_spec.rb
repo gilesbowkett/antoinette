@@ -55,7 +55,11 @@ RSpec.describe Antoinette::CompileElm do
       end
 
       it "cleans up temporary file" do
-        compiler.compile(elm_app_names) rescue nil
+        begin
+          compiler.compile(elm_app_names)
+        rescue
+          nil
+        end
         expect(File).to have_received(:delete).with(output_file)
       end
     end
