@@ -25,6 +25,9 @@ the Elm apps it needs, but no Rails template will download any Elm app it
 doesn't need. Antoinette also creates a visualizer, as an Elm app in a Rails
 view, which you can use to understand its output.
 
+Here's an example screenshot. In the actual Elm app, you can hover over any
+given bundle to see which Elm apps it places within which Rails templates.
+
 ![Example of Antoinette's admin visualizer](images/example.png)
 
 The name was inspired by mansion weave, a style of flooring based on woven elm
