@@ -124,7 +124,7 @@ The price is git commit noise, but what you get for it is systematically optimiz
 ## Requirements
 
 - Rails 7.0+
-- Elm (customize via `elm_path` in `config/antoinette.json`)
+- Elm (customizable via `elm_path` in `config/antoinette.json`)
 
 ## Configuration
 
