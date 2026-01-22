@@ -18,6 +18,8 @@ This is the problem Antoinette solves.
 Antoinette is a lightweight JS bundler which weaves Elm apps into JavaScript
 bundles, and weaves JavaScript bundles into Rails templates.
 
+![Example of Antoinette's admin visualizer](images/example.png)
+
 The name comes from mansion weave, a style of flooring based on woven elm wood,
 which was popular in French mansions from the 16th century onwards.
 
