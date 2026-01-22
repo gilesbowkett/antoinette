@@ -18,10 +18,17 @@ This is the problem Antoinette solves.
 Antoinette is a lightweight JS bundler which weaves Elm apps into JavaScript
 bundles, and weaves JavaScript bundles into Rails templates.
 
+It looks at `app/views` to make a hash which maps every Elm app referenced in
+the templates to every template which references them. It uses that mapping to
+create a set of JS bundles such that every Rails template will download all of
+the Elm apps it needs, but no Rails template will download any Elm app it
+doesn't need. Antoinette also creates a visualizer, as an Elm app in a Rails
+view, which you can use to understand its output.
+
 ![Example of Antoinette's admin visualizer](images/example.png)
 
-The name comes from mansion weave, a style of flooring based on woven elm wood,
-which was popular in French mansions from the 16th century onwards.
+The name was inspired by mansion weave, a style of flooring based on woven elm
+wood, which was popular in French mansions from the 16th century onwards.
 
 ## Installation
 
