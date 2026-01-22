@@ -30,8 +30,8 @@ given bundle to see which Elm apps it places within which Rails templates.
 
 ![Example of Antoinette's admin visualizer](images/example.png)
 
-The name was inspired by mansion weave, a style of flooring based on woven elm
-wood, which was popular in French mansions from the 16th century onwards.
+The name was inspired by mansion weave, a style of flooring based on woven elm,
+which was popular in French mansions from the 16th century onwards.
 
 ## Installation
 
