@@ -116,6 +116,8 @@ Antoinette injects script tags like:
 
 Embedding a hash in the comment ensures that tags only get updated when bundle content changes.
 
+The price is git commit noise, but what you get for it is systematically optimized JS download speed.
+
 ## Requirements
 
 - Rails 7.0+
