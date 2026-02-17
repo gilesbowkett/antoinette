@@ -17,8 +17,9 @@ module Antoinette
 
         option :stdout, type: :boolean, default: false, desc: "Output to stdout instead of file"
         option :custom_views, type: :array, default: [], desc: "Additional view directories to scan"
+        option :skip_layout_views, type: :array, default: [], desc: "Paths whose bundles should not get layout apps merged"
 
-        def call(stdout:, custom_views: [], **)
+        def call(stdout:, custom_views: [], skip_layout_views: [], **)
           out = Antoinette::CLI.output
           config_path = Rails.root.join("config", "antoinette.json")
 
@@ -29,7 +30,9 @@ module Antoinette
           end
           existing_custom = existing_config["custom_view_paths"] || []
           existing_elm_path = existing_config["elm_path"] || "elm"
+          existing_skip = existing_config["skip_layout_apps_paths"] || []
           all_custom_views = (existing_custom + custom_views).uniq
+          all_skip_layout = (existing_skip + skip_layout_views).uniq
 
           analyzer = Antoinette::ElmAppUsageAnalyzer.new(
             skip: "layouts/",
@@ -37,7 +40,8 @@ module Antoinette
           )
           weaver = Antoinette::Weaver.new(
             elm_analyzer: analyzer,
-            custom_view_paths: all_custom_views
+            custom_view_paths: all_custom_views,
+            skip_layout_apps_paths: all_skip_layout
           )
 
           output = JSON.parse(weaver.generate_json)

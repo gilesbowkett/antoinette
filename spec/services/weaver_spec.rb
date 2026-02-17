@@ -169,6 +169,36 @@ RSpec.describe Antoinette::Weaver do
       it "removes duplicate apps if layout app already in bundle" do
         expect(case_bundle.elm_apps.count("NavSidebar")).to eq(1)
       end
+
+      context "when skip_layout_apps_paths includes a bundle's template path" do
+        let(:mappings) do
+          {
+            ["CaseBuilder"] => ["cases/new.html.erb"],
+            ["BundleGraph"] => ["app/content/pages/blog/index.html.erb"]
+          }
+        end
+        let(:weaver) do
+          described_class.new(
+            elm_analyzer: elm_analyzer,
+            partial_resolver: partial_resolver,
+            skip_layout_apps_paths: ["app/content/pages/blog"]
+          )
+        end
+        let(:blog_bundle) do
+          result.find { it.elm_apps.include?("BundleGraph") }
+        end
+        let(:case_bundle) do
+          result.find { it.elm_apps.include?("CaseBuilder") }
+        end
+
+        it "does not merge layout apps into the skipped bundle" do
+          expect(blog_bundle.elm_apps).to eq(["BundleGraph"])
+        end
+
+        it "still merges layout apps into regular bundles" do
+          expect(case_bundle.elm_apps).to include("NavSidebar")
+        end
+      end
     end
   end
 
@@ -249,6 +279,30 @@ RSpec.describe Antoinette::Weaver do
 
       it "custom_view_paths contains the paths" do
         expect(parsed["custom_view_paths"]).to eq(["app/content/layouts"])
+      end
+    end
+
+    context "when skip_layout_apps_paths provided" do
+      let(:weaver) do
+        described_class.new(
+          elm_analyzer: elm_analyzer,
+          partial_resolver: partial_resolver,
+          skip_layout_apps_paths: ["app/content/pages/blog"]
+        )
+      end
+
+      it "includes skip_layout_apps_paths in JSON output" do
+        expect(parsed).to have_key("skip_layout_apps_paths")
+      end
+
+      it "skip_layout_apps_paths contains the paths" do
+        expect(parsed["skip_layout_apps_paths"]).to eq(["app/content/pages/blog"])
+      end
+    end
+
+    context "when skip_layout_apps_paths is empty" do
+      it "does not include skip_layout_apps_paths key" do
+        expect(parsed).not_to have_key("skip_layout_apps_paths")
       end
     end
 

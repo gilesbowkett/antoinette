@@ -10,18 +10,24 @@ module Antoinette
     def initialize(
       elm_analyzer: ElmAppUsageAnalyzer.new,
       partial_resolver: PartialResolver.new,
-      custom_view_paths: []
+      custom_view_paths: [],
+      skip_layout_apps_paths: []
     )
       @elm_analyzer = elm_analyzer
       @partial_resolver = partial_resolver
       @custom_view_paths = custom_view_paths
+      @skip_layout_apps_paths = skip_layout_apps_paths
     end
 
     def bundles
       @bundles ||= @elm_analyzer.layout_apps.then do |layout_apps|
         @elm_analyzer.mappings.map do |apps, templates|
           resolved_templates = resolve_templates_from_partials(templates)
-          merged_apps = (apps + layout_apps).uniq.sort
+          merged_apps = if skip_layout_merge?(templates)
+            apps.sort
+          else
+            (apps + layout_apps).uniq.sort
+          end
           Bundle.new(
             Haikunator.haikunate,
             merged_apps,
@@ -40,6 +46,7 @@ module Antoinette
         }
       end}
       output[:custom_view_paths] = @custom_view_paths if @custom_view_paths.any?
+      output[:skip_layout_apps_paths] = @skip_layout_apps_paths if @skip_layout_apps_paths.any?
       JSON.pretty_generate(output)
     end
 
@@ -54,6 +61,12 @@ module Antoinette
           template
         end
       end.uniq
+    end
+
+    def skip_layout_merge?(templates)
+      @skip_layout_apps_paths.any? && templates.all? do |template|
+        @skip_layout_apps_paths.any? { |path| template.start_with?(path) }
+      end
     end
   end
 end
