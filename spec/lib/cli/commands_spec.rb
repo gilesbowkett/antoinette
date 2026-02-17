@@ -6,12 +6,14 @@ RSpec.describe Antoinette::CLI::Commands do
   describe Antoinette::CLI::Commands::Config do
     let(:command) { described_class.new }
     let(:analyzer) { instance_double(Antoinette::ElmAppUsageAnalyzer) }
+    let(:layout_resolver) { instance_double(Antoinette::LayoutResolver) }
     let(:weaver) { instance_double(Antoinette::Weaver) }
     let(:json_output) { '{"bundles": []}' }
     let(:output_path) { Rails.root.join("config", "antoinette.json") }
 
     before do
       allow(Antoinette::ElmAppUsageAnalyzer).to receive(:new).and_return(analyzer)
+      allow(Antoinette::LayoutResolver).to receive(:new).and_return(layout_resolver)
       allow(Antoinette::Weaver).to receive(:new).and_return(weaver)
       allow(weaver).to receive(:generate_json).and_return(json_output)
       allow(File).to receive(:write)
@@ -20,16 +22,22 @@ RSpec.describe Antoinette::CLI::Commands do
     context "without stdout option" do
       let(:options) { {stdout: false} }
 
-      it "calls ElmAppUsageAnalyzer with skip parameter" do
+      it "calls ElmAppUsageAnalyzer with layout_dirs parameter" do
         command.call(**options)
         expect(Antoinette::ElmAppUsageAnalyzer).to have_received(:new)
-          .with(hash_including(skip: "layouts/"))
+          .with(hash_including(layout_dirs: ["app/views/layouts"]))
       end
 
-      it "calls Weaver with analyzer" do
+      it "calls LayoutResolver with layout_dirs parameter" do
+        command.call(**options)
+        expect(Antoinette::LayoutResolver).to have_received(:new)
+          .with(hash_including(layout_dirs: ["app/views/layouts"]))
+      end
+
+      it "calls Weaver with analyzer and layout_resolver" do
         command.call(**options)
         expect(Antoinette::Weaver).to have_received(:new)
-          .with(hash_including(elm_analyzer: analyzer))
+          .with(hash_including(elm_analyzer: analyzer, layout_resolver: layout_resolver))
       end
 
       it "calls generate_json on weaver" do
@@ -48,16 +56,16 @@ RSpec.describe Antoinette::CLI::Commands do
     context "with stdout option" do
       let(:options) { {stdout: true} }
 
-      it "calls ElmAppUsageAnalyzer with skip parameter" do
+      it "calls ElmAppUsageAnalyzer with layout_dirs parameter" do
         command.call(**options)
         expect(Antoinette::ElmAppUsageAnalyzer).to have_received(:new)
-          .with(hash_including(skip: "layouts/"))
+          .with(hash_including(layout_dirs: ["app/views/layouts"]))
       end
 
-      it "calls Weaver with analyzer" do
+      it "calls Weaver with analyzer and layout_resolver" do
         command.call(**options)
         expect(Antoinette::Weaver).to have_received(:new)
-          .with(hash_including(elm_analyzer: analyzer))
+          .with(hash_including(elm_analyzer: analyzer, layout_resolver: layout_resolver))
       end
 
       it "calls generate_json on weaver" do
@@ -68,6 +76,31 @@ RSpec.describe Antoinette::CLI::Commands do
       it "does not write to file" do
         command.call(**options)
         expect(File).not_to have_received(:write)
+      end
+    end
+
+    context "with layout_dirs option" do
+      let(:options) { {stdout: false, layout_dirs: ["app/content/layouts"]} }
+
+      it "includes extra layout dirs in ElmAppUsageAnalyzer" do
+        command.call(**options)
+        expect(Antoinette::ElmAppUsageAnalyzer).to have_received(:new)
+          .with(hash_including(layout_dirs: ["app/views/layouts", "app/content/layouts"]))
+      end
+
+      it "includes extra layout dirs in LayoutResolver" do
+        command.call(**options)
+        expect(Antoinette::LayoutResolver).to have_received(:new)
+          .with(hash_including(layout_dirs: ["app/views/layouts", "app/content/layouts"]))
+      end
+
+      it "persists extra layout_dirs in config output" do
+        command.call(**options)
+        written_json = nil
+        expect(File).to have_received(:write) do |_path, json|
+          written_json = JSON.parse(json)
+        end
+        expect(written_json["layout_dirs"]).to eq(["app/content/layouts"])
       end
     end
   end

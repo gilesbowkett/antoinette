@@ -8,8 +8,8 @@ module Antoinette
     ElmApp = Struct.new(:name)
     class Matrix < Hash; end
 
-    def initialize(skip: nil, custom_view_paths: [])
-      @skip = skip
+    def initialize(layout_dirs: ["app/views/layouts"], custom_view_paths: [])
+      @layout_dirs = layout_dirs
       @custom_view_paths = custom_view_paths
     end
 
@@ -21,7 +21,7 @@ module Antoinette
           next if apps.empty?
 
           relative_path = file_path.sub("#{Rails.root}/", "")
-          next if @skip && relative_path.include?("app/views/#{@skip}")
+          next if in_layout_dir?(relative_path)
 
           app_names = apps.map(&:name)
           result << ViewFile.new(relative_path, app_names)
@@ -60,14 +60,6 @@ module Antoinette
       @all_app_names ||= views.flat_map(&:elm_apps).uniq.sort
     end
 
-    def layout_apps
-      @layout_apps ||= Dir.glob(Rails.root.join("app", "views", "layouts", "*.html.erb"))
-        .flat_map do |file_path|
-          content = File.read(file_path)
-          elm_apps(content).map(&:name)
-        end.uniq
-    end
-
     def per_file
       @per_file ||= views.sort_by { |vf| -vf.elm_apps.count }
         .each_with_object({}) do |view_file, result|
@@ -95,6 +87,12 @@ module Antoinette
           csv << row
         end
       end
+    end
+
+    private
+
+    def in_layout_dir?(relative_path)
+      @layout_dirs.any? { |dir| relative_path.start_with?(dir) }
     end
   end
 end
