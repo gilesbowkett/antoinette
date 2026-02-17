@@ -61,11 +61,25 @@ module Antoinette
     end
 
     def layout_apps
-      @layout_apps ||= Dir.glob(Rails.root.join("app", "views", "layouts", "*.html.erb"))
-        .flat_map do |file_path|
-          content = File.read(file_path)
-          elm_apps(content).map(&:name)
-        end.uniq
+      @layout_apps ||= layout_paths.flat_map do |file_path|
+        content = File.read(file_path)
+        elm_apps(content).map(&:name)
+      end.uniq
+    end
+
+    def layout_paths
+      paths = Dir.glob(Rails.root.join("app", "views", "layouts", "*.html.erb"))
+      @custom_view_paths.each do |custom_path|
+        next unless custom_path.include?("layouts/")
+
+        full_path = Rails.root.join(custom_path)
+        if File.file?(full_path)
+          paths << full_path.to_s
+        else
+          paths.concat(Dir.glob(full_path.join("**", "*.html.erb")))
+        end
+      end
+      paths
     end
 
     def per_file
