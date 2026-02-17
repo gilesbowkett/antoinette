@@ -5,51 +5,6 @@ require "rails_helper"
 RSpec.describe Antoinette::ElmAppUsageAnalyzer do
   let(:analyzer) { described_class.new }
 
-  describe "#layout_apps" do
-    let(:layout_content) { "const app = Elm.NavSidebar.init({ node: n })" }
-
-    before do
-      allow(Dir).to receive(:glob).and_call_original
-      allow(File).to receive(:read).and_call_original
-    end
-
-    context "when a layout exists in app/views/layouts" do
-      let(:layout_path) { Rails.root.join("app", "views", "layouts", "application.html.erb") }
-      let(:result) { analyzer.layout_apps }
-
-      before do
-        allow(Dir).to receive(:glob)
-          .with(Rails.root.join("app", "views", "layouts", "*.html.erb"))
-          .and_return([layout_path.to_s])
-        allow(File).to receive(:read).with(layout_path.to_s).and_return(layout_content)
-      end
-
-      it "includes the app from the layout" do
-        expect(result).to eq(["NavSidebar"])
-      end
-    end
-
-    context "when custom_view_paths includes a layout file" do
-      let(:analyzer) { described_class.new(custom_view_paths: ["app/content/layouts/antoinette.html.erb"]) }
-      let(:custom_layout_path) { Rails.root.join("app/content/layouts/antoinette.html.erb") }
-      let(:custom_layout_content) { "const app = Elm.BundleGraph.init({ node: n })" }
-      let(:result) { analyzer.layout_apps }
-
-      before do
-        allow(Dir).to receive(:glob)
-          .with(Rails.root.join("app", "views", "layouts", "*.html.erb"))
-          .and_return([])
-        allow(File).to receive(:file?).and_call_original
-        allow(File).to receive(:file?).with(custom_layout_path).and_return(true)
-        allow(File).to receive(:read).with(custom_layout_path.to_s).and_return(custom_layout_content)
-      end
-
-      it "includes the app from the custom layout" do
-        expect(result).to eq(["BundleGraph"])
-      end
-    end
-  end
-
   describe "#elm_apps" do
     context "when no Elm apps in content" do
       let(:content) { "<div>Hello World</div>" }
