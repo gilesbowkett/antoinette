@@ -10,9 +10,9 @@ module Antoinette
       full_path = resolve_template_path(template_path)
       content = File.read(full_path)
 
-      return unless content.match?(/<!-- antoinette [a-f0-9]+ -->/)
+      return unless content.match?(InjectScriptTag::MARKER)
 
-      updated_content = content.gsub(/^.*<!-- antoinette [a-f0-9]+ -->.*\n?/, "")
+      updated_content = content.gsub(/^.*#{InjectScriptTag::MARKER}.*\n?/, "")
 
       File.write(full_path, updated_content)
     end

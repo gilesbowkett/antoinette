@@ -19,7 +19,7 @@ RSpec.describe Antoinette::ClearScriptTag do
         <<~ERB
           <h1>New Case</h1>
           <%= render 'form' %>
-          <%= javascript_include_tag "holy-waterfall-8432" %> <!-- antoinette a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2 -->
+          <%= javascript_include_tag "holy-waterfall-8432" %> <!-- antoinette -->
         ERB
       end
 
@@ -61,7 +61,7 @@ RSpec.describe Antoinette::ClearScriptTag do
         <<~ERB
           <h1>New Case</h1>
           <%= javascript_include_tag "application" %>
-          <%= javascript_include_tag "holy-waterfall-8432" %> <!-- antoinette a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2 -->
+          <%= javascript_include_tag "holy-waterfall-8432" %> <!-- antoinette -->
         ERB
       end
 
@@ -126,7 +126,7 @@ RSpec.describe Antoinette::ClearScriptTag do
       let(:original_content) do
         <<~ERB
           <h1>Blog</h1>
-          <%= javascript_include_tag "bundle" %> <!-- antoinette abc123def456 -->
+          <%= javascript_include_tag "bundle" %> <!-- antoinette -->
         ERB
       end
 
@@ -155,7 +155,7 @@ RSpec.describe Antoinette::ClearScriptTag do
       let(:original_content) do
         <<~ERB
           <h1>New Case</h1>
-          <%= javascript_include_tag "bundle" %> <!-- antoinette abc123def456 -->
+          <%= javascript_include_tag "bundle" %> <!-- antoinette -->
         ERB
       end
 

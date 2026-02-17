@@ -107,19 +107,17 @@ flow into bundles and then into Rails templates.
 1. **Analysis**: Scans Rails views for `Elm.AppName.init` patterns
 2. **Grouping**: Groups templates that use the same combination of Elm apps
 3. **Bundling**: Compiles each group into a single JavaScript bundle (with a haiku-styled name like `holy-waterfall-8432`)
-4. **Injection**: Adds `javascript_include_tag` to templates with SHA1 digest comments for idempotent updates
+4. **Injection**: Adds `javascript_include_tag` to templates with a marker comment for idempotent updates
 
 ### Script Tag Format
 
 Antoinette injects script tags like:
 
 ```erb
-<%= javascript_include_tag "antoinette/holy-waterfall-8432" %> <!-- antoinette a1b2c3d4... -->
+<%= javascript_include_tag "antoinette/holy-waterfall-8432" %> <!-- antoinette -->
 ```
 
-Embedding a hash in the comment ensures that tags only get updated when bundle content changes.
-
-The price is git commit noise, but what you get for it is systematically optimized JS download speed.
+The `<!-- antoinette -->` comment marks the line so it can be found and replaced on subsequent builds.
 
 ## Requirements
 
