@@ -13,6 +13,8 @@ type alias Model =
     { bundles : List Bundle
     , selectedNodeId : Maybe String
     , lockedNodeIds : List String
+    , width : Maybe Int
+    , height : Maybe Int
     }
 
 
@@ -25,6 +27,8 @@ type alias Bundle =
 
 type alias Flags =
     { bundles : List Bundle
+    , width : Maybe Int
+    , height : Maybe Int
     }
 
 
@@ -59,6 +63,8 @@ init flags =
             ( { bundles = decoded.bundles
               , selectedNodeId = Nothing
               , lockedNodeIds = []
+              , width = decoded.width
+              , height = decoded.height
               }
             , Cmd.none
             )
@@ -67,6 +73,8 @@ init flags =
             ( { bundles = []
               , selectedNodeId = Nothing
               , lockedNodeIds = []
+              , width = Nothing
+              , height = Nothing
               }
             , Cmd.none
             )
@@ -125,8 +133,8 @@ view model =
                     model.lockedNodeIds
 
         sankeyModel =
-            { svgWidth = 1100
-            , svgHeight = totalHeight model.bundles
+            { svgWidth = toFloat (Maybe.withDefault 1100 model.width)
+            , svgHeight = toFloat (Maybe.withDefault (totalHeightInt model.bundles) model.height)
             , columnWidths = columnWidths
             , nodePadding = 8
             , columnSpacing = 350
@@ -162,7 +170,7 @@ view model =
                 , style "border" "1px solid #d1d5db"
                 ]
     in
-    div []
+    div [ Html.Attributes.class "bundle-graph" ]
         [ div [ style "display" "flex", style "align-items" "center", style "gap" "16px" ]
             [ h1
                 [ style "font-family" "system-ui, sans-serif"
@@ -187,8 +195,8 @@ view model =
         ]
 
 
-totalHeight : List Bundle -> Float
-totalHeight bundles =
+totalHeightInt : List Bundle -> Int
+totalHeightInt bundles =
     let
         elmApps =
             uniqueElmApps bundles
@@ -202,7 +210,7 @@ totalHeight bundles =
         rowHeight =
             27
     in
-    toFloat (maxItems * rowHeight + 100)
+    maxItems * rowHeight + 100
 
 
 buildColumnWidths : List LabelNode -> Dict.Dict Int Float
@@ -332,8 +340,10 @@ unique list =
 
 flagsDecoder : Decoder Flags
 flagsDecoder =
-    Decode.map Flags
+    Decode.map3 Flags
         (Decode.field "bundles" (Decode.list bundleDecoder))
+        (Decode.maybe (Decode.field "width" Decode.int))
+        (Decode.maybe (Decode.field "height" Decode.int))
 
 
 bundleDecoder : Decoder Bundle
