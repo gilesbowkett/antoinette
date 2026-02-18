@@ -17,8 +17,9 @@ module Antoinette
 
         option :stdout, type: :boolean, default: false, desc: "Output to stdout instead of file"
         option :custom_views, type: :array, default: [], desc: "Additional view directories to scan"
+        option :layout_dirs, type: :array, default: [], desc: "Additional layout directories to scan"
 
-        def call(stdout:, custom_views: [], **)
+        def call(stdout:, custom_views: [], layout_dirs: [], **)
           out = Antoinette::CLI.output
           config_path = Rails.root.join("config", "antoinette.json")
 
@@ -29,19 +30,27 @@ module Antoinette
           end
           existing_custom = existing_config["custom_view_paths"] || []
           existing_elm_path = existing_config["elm_path"] || "elm"
+          existing_layout_dirs = existing_config["layout_dirs"] || []
           all_custom_views = (existing_custom + custom_views).uniq
+          all_layout_dirs = (["app/views/layouts"] + existing_layout_dirs + layout_dirs).uniq
 
           analyzer = Antoinette::ElmAppUsageAnalyzer.new(
-            skip: "layouts/",
+            layout_dirs: all_layout_dirs,
             custom_view_paths: all_custom_views
+          )
+          layout_resolver = Antoinette::LayoutResolver.new(
+            layout_dirs: all_layout_dirs
           )
           weaver = Antoinette::Weaver.new(
             elm_analyzer: analyzer,
+            layout_resolver: layout_resolver,
             custom_view_paths: all_custom_views
           )
 
           output = JSON.parse(weaver.generate_json)
           output["elm_path"] = existing_elm_path
+          extra_layout_dirs = all_layout_dirs - ["app/views/layouts"]
+          output["layout_dirs"] = extra_layout_dirs if extra_layout_dirs.any?
           json_output = JSON.pretty_generate(output)
 
           if stdout

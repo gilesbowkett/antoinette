@@ -10,24 +10,27 @@ module Antoinette
     def initialize(
       elm_analyzer: ElmAppUsageAnalyzer.new,
       partial_resolver: PartialResolver.new,
+      layout_resolver: LayoutResolver.new,
       custom_view_paths: []
     )
       @elm_analyzer = elm_analyzer
       @partial_resolver = partial_resolver
+      @layout_resolver = layout_resolver
       @custom_view_paths = custom_view_paths
     end
 
     def bundles
-      @bundles ||= @elm_analyzer.layout_apps.then do |layout_apps|
-        @elm_analyzer.mappings.map do |apps, templates|
-          resolved_templates = resolve_templates_from_partials(templates)
-          merged_apps = (apps + layout_apps).uniq.sort
-          Bundle.new(
-            Haikunator.haikunate,
-            merged_apps,
-            resolved_templates.sort
-          )
-        end.sort_by { |bundle| -bundle.elm_apps.count }
+      @bundles ||= begin
+        result = []
+        @elm_analyzer.mappings.each do |page_apps, templates|
+          resolved = resolve_templates_from_partials(templates)
+          groups = resolved.group_by { |t| @layout_resolver.apps_for(t) }
+          groups.each do |layout_apps, group_templates|
+            merged = (page_apps + layout_apps).uniq.sort
+            result << Bundle.new(Haikunator.haikunate, merged, group_templates.sort)
+          end
+        end
+        result.sort_by { |b| -b.elm_apps.count }
       end
     end
 

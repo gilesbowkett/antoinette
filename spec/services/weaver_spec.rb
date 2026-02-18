@@ -3,15 +3,16 @@
 require "rails_helper"
 
 RSpec.describe Antoinette::Weaver do
-  let(:layout_apps) { [] }
   let(:elm_analyzer) do
-    instance_double(Antoinette::ElmAppUsageAnalyzer, mappings: mappings, layout_apps: layout_apps)
+    instance_double(Antoinette::ElmAppUsageAnalyzer, mappings: mappings)
   end
   let(:partial_resolver) { instance_double(Antoinette::PartialResolver) }
+  let(:layout_resolver) { instance_double(Antoinette::LayoutResolver) }
   let(:weaver) do
     described_class.new(
       elm_analyzer: elm_analyzer,
-      partial_resolver: partial_resolver
+      partial_resolver: partial_resolver,
+      layout_resolver: layout_resolver
     )
   end
 
@@ -28,6 +29,7 @@ RSpec.describe Antoinette::Weaver do
 
     before do
       allow(partial_resolver).to receive(:resolve).and_return([])
+      allow(layout_resolver).to receive(:apps_for).and_return([])
     end
 
     let(:result) { weaver.bundles }
@@ -108,6 +110,10 @@ RSpec.describe Antoinette::Weaver do
         allow(partial_resolver).to receive(:resolve)
           .with("cases/_baby_case.html.erb")
           .and_return(parent_templates)
+        allow(layout_resolver).to receive(:apps_for)
+          .with("app/views/cases/index.html.erb").and_return([])
+        allow(layout_resolver).to receive(:apps_for)
+          .with("app/views/users/show.html.erb").and_return([])
       end
 
       let(:bundle) { result.first }
@@ -141,10 +147,10 @@ RSpec.describe Antoinette::Weaver do
           ["PanelGallery"] => ["eurorack_modules/show.html.erb"]
         }
       end
-      let(:layout_apps) { ["NavSidebar"] }
 
       before do
         allow(partial_resolver).to receive(:resolve).and_return([])
+        allow(layout_resolver).to receive(:apps_for).and_return(["NavSidebar"])
       end
 
       let(:case_bundle) do
@@ -170,6 +176,52 @@ RSpec.describe Antoinette::Weaver do
         expect(case_bundle.elm_apps.count("NavSidebar")).to eq(1)
       end
     end
+
+    context "when templates use different layouts" do
+      let(:mappings) do
+        {
+          ["CaseBuilder"] => [
+            "cases/new.html.erb",
+            "app/content/pages/blog/index.html.erb"
+          ]
+        }
+      end
+
+      before do
+        allow(partial_resolver).to receive(:resolve).and_return([])
+        allow(layout_resolver).to receive(:apps_for)
+          .with("cases/new.html.erb").and_return(["NavSidebar"])
+        allow(layout_resolver).to receive(:apps_for)
+          .with("app/content/pages/blog/index.html.erb").and_return(["BlogNav"])
+      end
+
+      it "splits into separate bundles by layout" do
+        expect(result.length).to eq(2)
+      end
+
+      let(:nav_bundle) do
+        result.find { it.elm_apps.include?("NavSidebar") }
+      end
+      let(:blog_bundle) do
+        result.find { it.elm_apps.include?("BlogNav") }
+      end
+
+      it "assigns NavSidebar layout apps to the cases bundle" do
+        expect(nav_bundle.templates).to eq(["cases/new.html.erb"])
+      end
+
+      it "assigns BlogNav layout apps to the blog bundle" do
+        expect(blog_bundle.templates).to eq(["app/content/pages/blog/index.html.erb"])
+      end
+
+      it "merges layout apps into each bundle's elm_apps" do
+        expect(nav_bundle.elm_apps).to contain_exactly("CaseBuilder", "NavSidebar")
+      end
+
+      it "merges blog layout apps into blog bundle's elm_apps" do
+        expect(blog_bundle.elm_apps).to contain_exactly("BlogNav", "CaseBuilder")
+      end
+    end
   end
 
   describe "#generate_json" do
@@ -182,6 +234,7 @@ RSpec.describe Antoinette::Weaver do
 
     before do
       allow(partial_resolver).to receive(:resolve).and_return([])
+      allow(layout_resolver).to receive(:apps_for).and_return([])
     end
 
     let(:result) { weaver.generate_json }
@@ -234,11 +287,12 @@ RSpec.describe Antoinette::Weaver do
     end
 
     context "when custom_view_paths provided" do
-      let(:custom_view_paths) { ["app/content/layouts"] }
+      let(:custom_view_paths) { ["app/content/pages/blog"] }
       let(:weaver) do
         described_class.new(
           elm_analyzer: elm_analyzer,
           partial_resolver: partial_resolver,
+          layout_resolver: layout_resolver,
           custom_view_paths: custom_view_paths
         )
       end
@@ -248,7 +302,7 @@ RSpec.describe Antoinette::Weaver do
       end
 
       it "custom_view_paths contains the paths" do
-        expect(parsed["custom_view_paths"]).to eq(["app/content/layouts"])
+        expect(parsed["custom_view_paths"]).to eq(["app/content/pages/blog"])
       end
     end
 
@@ -258,6 +312,7 @@ RSpec.describe Antoinette::Weaver do
         described_class.new(
           elm_analyzer: elm_analyzer,
           partial_resolver: partial_resolver,
+          layout_resolver: layout_resolver,
           custom_view_paths: custom_view_paths
         )
       end
