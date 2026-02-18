@@ -146,6 +146,15 @@ The `config/antoinette.json` file structure:
 }
 ```
 
+## Layout Awareness and SitePress Support
+
+`custom_view_paths` exists because Antoinette has a limited layout awareness
+which is partially tied into SitePress. Antoinette looks for layouts in
+`app/views/layouts` and in the YAML frontmatter in SitePress content templates.
+Caveats aside, if two templates use the same Elm apps but render inside
+different layouts, and those layouts embed different Elm apps, they get separate
+bundles.
+
 ## Rake Integration
 
 The `antoinette:build` task runs automatically before `assets:precompile`:
