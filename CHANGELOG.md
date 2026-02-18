@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.0] - 2026
+
+- Layout-aware bundling for SitePress YAML frontmatter
+- Remove SHA1 digests from template marker comments
+- Optional `--width` and `--height` flags for BundleGraph
+
 ## [0.1.0] - 2024
 
 - Initial extraction from Gridular Mod
