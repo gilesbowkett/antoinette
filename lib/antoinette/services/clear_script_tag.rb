@@ -12,7 +12,7 @@ module Antoinette
 
       return unless content.match?(InjectScriptTag::MARKER)
 
-      updated_content = content.gsub(/^.*#{InjectScriptTag::MARKER}.*\n?/, "")
+      updated_content = content.gsub(/^.*#{InjectScriptTag::MARKER}.*\n?/o, "")
 
       File.write(full_path, updated_content)
     end

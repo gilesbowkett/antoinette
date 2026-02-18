@@ -11,7 +11,7 @@ module Antoinette
       script_tag = "<%= javascript_include_tag \"antoinette/#{bundle_name}\" %> <!-- antoinette -->"
 
       updated_content = if content.match?(MARKER)
-        content.gsub(/^.*#{MARKER}.*$/, script_tag)
+        content.gsub(/^.*#{MARKER}.*$/o, script_tag)
       else
         content + "\n" + script_tag
       end
